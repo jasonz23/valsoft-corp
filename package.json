@@ -1,0 +1,31 @@
+{
+  "name": "valsoft-corp",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run build --workspace @valsoft/shared && concurrently -k \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:api": "npm run start:dev --workspace api",
+    "dev:web": "npm run dev --workspace web",
+    "start:prod:api": "npm run start:prod --workspace api",
+    "build": "npm run build --workspace @valsoft/shared && npm run build --workspace api && npm run build --workspace web",
+    "lint": "npm run lint --workspace api && npm run lint --workspace web",
+    "test": "npm run test --workspace api",
+    "test:ci": "npm run prisma:migrate:deploy --workspace api && npm run test --workspace api -- --runInBand",
+    "migrate:ci": "npm run prisma:migrate:deploy --workspace api",
+    "prisma:generate": "npm run prisma:generate --workspace api",
+    "prisma:migrate": "npm run prisma:migrate --workspace api",
+    "db:seed": "npm run db:seed --workspace api",
+    "db:up": "docker compose up -d db db-test supabase-auth supabase-gateway",
+    "db:down": "docker compose down",
+    "db:logs": "docker compose logs -f db db-test supabase-auth supabase-gateway",
+    "db:ci:up": "docker compose -f docker-compose.ci.yml up -d db_support_ops_test_ci",
+    "db:ci:down": "docker compose -f docker-compose.ci.yml down"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

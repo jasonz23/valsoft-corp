@@ -1,0 +1,131 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum AiCategory {
+  BUG_REPORT
+  FEATURE_REQUEST
+  BILLING_QUESTION
+  GENERAL_QUESTION
+}
+
+enum ProcessingStatus {
+  RECEIVED
+  PROCESSING
+  PROCESSED
+  FAILED
+}
+
+enum EmailResponseStatus {
+  FOR_APPROVAL
+  APPROVED
+  SENT
+}
+
+enum IssueStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  FOR_APPROVAL
+  BLOCKED
+  DONE
+}
+
+model User {
+  id             String   @id @default(cuid())
+  name           String
+  email          String   @unique
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  assignedIssues         Issue[]         @relation("IssueAssignee")
+  assignedEmailResponses EmailResponse[] @relation("EmailResponseAssignee")
+  emailResponseNotes     EmailResponseNote[]
+  issueNotes             IssueNote[]
+}
+
+model IncomingEmail {
+  id                String   @id @default(cuid())
+  messageId         String   @unique
+  senderEmail       String
+  subject           String
+  body              String
+  receivedTimestamp DateTime
+
+  aiCategory       AiCategory?
+  replyDraft       String?
+  processingStatus ProcessingStatus @default(RECEIVED)
+  processingError  String?
+  processedAt      DateTime?
+  promptVersion    String?
+  aiModel          String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  emailResponse EmailResponse?
+  issue         Issue?
+}
+
+model EmailResponse {
+  id              String        @id @default(cuid())
+  incomingEmailId String        @unique
+  incomingEmail   IncomingEmail @relation(fields: [incomingEmailId], references: [id], onDelete: Cascade)
+
+  status     EmailResponseStatus @default(FOR_APPROVAL)
+  draft      String
+  approvedAt DateTime?
+  assigneeId String?
+  assignee   User?               @relation("EmailResponseAssignee", fields: [assigneeId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  notes EmailResponseNote[]
+}
+
+model Issue {
+  id              String        @id @default(cuid())
+  incomingEmailId String        @unique
+  incomingEmail   IncomingEmail @relation(fields: [incomingEmailId], references: [id], onDelete: Cascade)
+
+  title       String
+  description String?
+  status      IssueStatus @default(NOT_STARTED)
+  assigneeId  String?
+  assignee    User?       @relation("IssueAssignee", fields: [assigneeId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  notes IssueNote[]
+}
+
+model EmailResponseNote {
+  id              String        @id @default(cuid())
+  emailResponseId String
+  emailResponse   EmailResponse @relation(fields: [emailResponseId], references: [id], onDelete: Cascade)
+
+  content   String
+  authorId  String?
+  author    User?   @relation(fields: [authorId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model IssueNote {
+  id      String @id @default(cuid())
+  issueId String
+  issue   Issue  @relation(fields: [issueId], references: [id], onDelete: Cascade)
+
+  content   String
+  authorId  String?
+  author    User?   @relation(fields: [authorId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

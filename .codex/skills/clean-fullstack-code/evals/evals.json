@@ -1,0 +1,23 @@
+{
+  "skill_name": "clean-fullstack-code",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "I need to build a user authentication module for my NestJS backend. It should handle signup, login, password reset, and JWT session management with refresh token rotation. I'm using PostgreSQL with Prisma and Supabase Auth. Write the tests first, then implement. The PRODUCT.md says we're building a SaaS task manager and auth is the first module.",
+      "expected_output": "A complete NestJS auth module following TDD: SPEC.md written first, then .spec.ts test files with Jest mocking of repositories and external services (using jest.Mocked<T>), then implementation that makes tests pass. Should include: auth.module.ts, auth.service.ts + spec, auth.controller.ts + spec, DTOs with @ApiProperty and class-validator decorators, Swagger decorators on all endpoints (@ApiTags, @ApiOperation, @ApiResponse), Pino-based structured logger injected via constructor (no console.log), SupabaseAuthGuard for JWT validation, test factories (buildUser etc). Helper functions extracted for reusable logic. Code optimized — no dead code. Should reference .env.test for test database connection.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "prompt": "Here's my NestJS orders controller. Can you refactor it and add proper tests?\n\n@Controller('orders')\nexport class OrdersController {\n  constructor(private db: any) {}\n\n  @Post()\n  async create(@Body() body: any) {\n    try {\n      var order: any = {}\n      order.userId = body.userId\n      order.items = body.items\n      order.total = 0\n      for (var i = 0; i < order.items.length; i++) {\n        order.total = order.total + order.items[i].price * order.items[i].quantity\n      }\n      console.log('Creating order for user: ' + order.userId)\n      const result = await this.db.query('INSERT INTO orders (user_id, items, total) VALUES (\"' + order.userId + '\", \"' + JSON.stringify(order.items) + '\", ' + order.total + ')')\n      order.id = result.insertId\n      console.log('Order created: ' + order.id)\n      return order\n    } catch(e) {\n      console.log(e)\n      return { error: 'something went wrong' }\n    }\n  }\n}",
+      "expected_output": "Full refactor with security issues identified (SQL injection, no auth, no validation, console.log, any types everywhere). Refactored to proper NestJS architecture: OrdersModule, OrdersService (business logic), OrdersRepository (data access), OrdersController (HTTP only). DTOs with @ApiProperty + class-validator. Swagger decorators on controller. Tests written FIRST (spec files with jest.Mocked<T> for repository and logger), then implementation. Pino structured logger replacing console.log. Helper function for order total calculation extracted to helpers/ directory. Prisma or TypeORM instead of raw SQL. SupabaseAuthGuard on endpoint. No var, no any, explicit return types. Consistent error response via ExceptionFilter.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I'm starting a new full-stack project — a SaaS dashboard for managing team tasks. It'll be Next.js frontend, NestJS backend API, PostgreSQL with Prisma, Supabase Auth, and eventually a React Native mobile app. Can you set up the complete project structure with all config files? I need Docker for local dev with separate test database, GCP Cloud Build for CI/CD deploying to Cloud Run, and Swagger for the API docs.",
+      "expected_output": "Complete monorepo with: PRODUCT.md at root, .gitignore (first file), docker-compose.yml with db (port 54322), db-test (port 54323, no volume), supabase-auth (GoTrue), supabase-gateway (nginx), docker-compose.ci.yml for CI. Dockerfile (multi-stage). cloudbuild.yaml with build→push→test→migrate→deploy steps, using GCP Secret Manager for private secrets and direct env vars for public config. .env.example, .env, .env.test (git-ignored). scripts/init-db.sql and nginx.conf. Package.json with full script set (docker:up/down/reset, db:migrate/seed, test with dotenv -e .env.test, test:ci, etc). apps/api (NestJS with module structure, Swagger setup in main.ts, Pino logger, SupabaseAuthGuard, common/ with filters/guards/interceptors/pipes). apps/web (Next.js). apps/mobile stub (Expo). packages/shared. SPEC.md in every module folder. tsconfig with strict:true. Jest config loading .env.test via test/setup.ts.",
+      "files": []
+    }
+  ]
+}

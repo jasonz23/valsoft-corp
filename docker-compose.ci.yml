@@ -1,0 +1,12 @@
+services:
+  db_support_ops_test_ci:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: support_ops_test_ci
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d support_ops_test_ci"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
