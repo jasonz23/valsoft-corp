@@ -21,7 +21,7 @@ High-level flow:
 
 | # | Subject | Category | Reply Draft |
 |---|---|---|---|
-| 1 | Can't log in | **Bug Report** | I see you’ve been locked out since yesterday and the password reset email isn’t arriving, with a meeting coming up in two hours. We’re going to check your account’s email delivery and reset flow right away, and can help you regain access as quickly as possible. Please confirm the email address on the account and check spam/junk (and any corporate quarantine) while we investigate on our side. |
+| 1 | Can't log in | **Bug Report** | I see you’ve been locked out since yesterday and the password reset email isn’t arriving, with a meeting coming up in two hours. We’re going to check your account’s email delivery, and can help you regain access as quickly as possible. Please confirm the email address on the account and check spam/junk (and any corporate quarantine) while we investigate on our side. |
 | 2 | Would love a dark mode | **Feature Request** | A dark mode option for the dashboard makes a lot of sense, especially for late-night use. I’m going to share this request with our product team and check whether it’s already on the roadmap. If you can tell me whether you’d want it to follow your system theme or be a manual toggle, that’ll help us scope it. |
 | 3 | Charged twice this month | **Billing Question** | I see two $49 charges this month tied to invoice INV-3847, and I’m going to pull up the billing record to confirm whether a duplicate payment was captured. Once I verify what happened, I’ll let you know the next steps for reversing the extra charge. If you can share the date(s) of the two charges (or the last 4 digits of the card), that will help me match them quickly. |
 
