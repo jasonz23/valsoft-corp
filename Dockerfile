@@ -14,7 +14,9 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-RUN npm run prisma:generate --workspace api
+RUN DATABASE_URL=postgresql://postgres:postgres@localhost:5432/support_ops?schema=public \
+    DIRECT_URL=postgresql://postgres:postgres@localhost:5432/support_ops?schema=public \
+    npm run prisma:generate --workspace api
 RUN npm run build --workspace @valsoft/shared
 RUN npm run build --workspace api
 
