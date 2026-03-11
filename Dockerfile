@@ -1,5 +1,6 @@
 FROM node:20-bookworm-slim AS deps
 WORKDIR /app
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 COPY package.json package-lock.json ./
 COPY apps/api/package.json ./apps/api/package.json
@@ -10,6 +11,7 @@ RUN npm ci
 
 FROM node:20-bookworm-slim AS builder
 WORKDIR /app
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -23,6 +25,7 @@ RUN npm run build --workspace api
 FROM node:20-bookworm-slim AS runner
 ENV NODE_ENV=production
 WORKDIR /app
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /app /app
 

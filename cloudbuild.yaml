@@ -19,27 +19,20 @@ steps:
 
   - id: start-test-db
     name: docker/compose:1.29.2
-    args: ['-f', 'docker-compose.ci.yml', 'up', '-d', 'db_support_ops_test_ci']
+    args:
+      ['-p', 'support_ops_ci', '-f', 'docker-compose.ci.yml', 'up', '-d', 'db_support_ops_test_ci']
 
   - id: run-tests
-    name: '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_IMAGE_NAME}:$COMMIT_SHA'
-    entrypoint: sh
-    args:
-      - '-c'
-      - 'cd /app && npm run test:ci'
+    name: docker/compose:1.29.2
     env:
-      - 'DATABASE_URL=postgresql://postgres:postgres@db_support_ops_test_ci:5432/support_ops_test_ci?schema=public&connect_timeout=300'
-      - 'DIRECT_URL=postgresql://postgres:postgres@db_support_ops_test_ci:5432/support_ops_test_ci?schema=public&connect_timeout=300'
-      - 'OPENAI_API_KEY=test-key'
-      - 'OPENAI_MODEL=gpt-4.1-mini'
-      - 'OPENAI_PROMPT_VERSION=v1'
-      - 'PORT=4000'
-      - 'NEXT_PUBLIC_API_BASE_URL=http://localhost:4000/api'
+      - 'APP_IMAGE=${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_IMAGE_NAME}:$COMMIT_SHA'
+    args:
+      ['-p', 'support_ops_ci', '-f', 'docker-compose.ci.yml', 'run', '--rm', 'app_support_ops_test_ci']
     waitFor: ['docker-build', 'docker-push', 'start-test-db']
 
   - id: stop-test-db
     name: docker/compose:1.29.2
-    args: ['-f', 'docker-compose.ci.yml', 'down']
+    args: ['-p', 'support_ops_ci', '-f', 'docker-compose.ci.yml', 'down']
     waitFor: ['run-tests']
 
   - id: migrate
@@ -78,7 +71,7 @@ steps:
         NODE_ENV=production|||
         PROJECT_ENV=staging|||
         PORT=4000|||
-        OPENAI_MODEL=gpt-4.1-mini|||
+        OPENAI_MODEL=gpt-5.3|||
         OPENAI_PROMPT_VERSION=v1|||
         NEXT_PUBLIC_API_BASE_URL=${_SERVICE_URL}/api|||
         CLOUD_RUN_SERVICE_URL=${_SERVICE_URL}

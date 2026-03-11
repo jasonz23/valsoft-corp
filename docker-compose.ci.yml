@@ -10,3 +10,20 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+
+  app_support_ops_test_ci:
+    image: ${APP_IMAGE}
+    depends_on:
+      db_support_ops_test_ci:
+        condition: service_healthy
+    working_dir: /app
+    entrypoint: sh
+    command: -c "cd /app && npm run test:ci"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db_support_ops_test_ci:5432/support_ops_test_ci?schema=public&connect_timeout=300
+      DIRECT_URL: postgresql://postgres:postgres@db_support_ops_test_ci:5432/support_ops_test_ci?schema=public&connect_timeout=300
+      OPENAI_API_KEY: test-key
+      OPENAI_MODEL: gpt-4.1-mini
+      OPENAI_PROMPT_VERSION: v1
+      PORT: 4000
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:4000/api
