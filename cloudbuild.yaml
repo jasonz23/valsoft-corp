@@ -70,7 +70,7 @@ steps:
         --update-env-vars=^|||^
         NODE_ENV=production|||
         PROJECT_ENV=staging|||
-        OPENAI_MODEL=gpt-5.3|||
+        OPENAI_MODEL=gpt-5.2|||
         OPENAI_PROMPT_VERSION=v1|||
         NEXT_PUBLIC_API_BASE_URL=${_SERVICE_URL}/api|||
         CLOUD_RUN_SERVICE_URL=${_SERVICE_URL}
