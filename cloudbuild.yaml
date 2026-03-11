@@ -97,8 +97,6 @@ availableSecrets:
       env: DATABASE_URL
     - versionName: projects/1026681251800/secrets/SUPABASE_DIRECT_URL_SUPPORT_OPS/versions/latest
       env: DIRECT_URL
-    - versionName: projects/1026681251800/secrets/OPENAI_API_KEY_SUPPORT_OPS/versions/latest
-      env: OPENAI_API_KEY
 
 images:
   - ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_IMAGE_NAME}:$COMMIT_SHA
